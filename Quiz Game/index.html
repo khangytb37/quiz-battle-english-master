@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Battle: English Master — Room Competition</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <canvas id="particles-canvas"></canvas>
+
+    <button id="lang-toggle" class="lang-btn" title="Switch Language / Đổi ngôn ngữ" aria-label="Switch Language">
+    <span class="lang-icon">🌐</span>
+    <span id="lang-text" class="lang-text">EN</span>
+  </button>
+  <button id="theme-toggle" class="theme-btn" title="Switch Theme / Đổi giao diện" aria-label="Switch Theme">
+    <span class="theme-icon-dark">🌙</span>
+    <span class="theme-icon-light" style="display:none">☀️</span>
+  </button>
+  <button id="audio-toggle" class="audio-btn" title="Toggle Audio / Âm thanh" aria-label="Toggle Audio">
+    <span class="audio-on">🔊</span>
+    <span class="audio-off" style="display:none">🔇</span>
+  </button>
+
+    <div id="screen-lobby" class="screen active">
+    <div class="lobby-container">
+      <div class="logo-section">
+        <h1 class="game-title neon-text">
+          <span class="title-icon">⚔️</span>
+          <span data-i18n="gameTitle">QUIZ BATTLE</span>
+          <span class="title-icon">⚔️</span>
+        </h1>
+        <h2 class="game-subtitle neon-text-purple" data-i18n="gameSubtitle">ENGLISH MASTER</h2>
+        <p class="game-tagline" data-i18n="tagline">Room Competition • Real-time English Exam Battle</p>
+      </div>
+
+      <div class="setup-card glass-card">
+        <h3 class="card-title"><span class="icon">👤</span> <span data-i18n="playerCardTitle">Player Profile</span></h3>
+        <div class="nickname-input-group">
+          <input type="text" id="nickname-input" class="neon-input" placeholder="Enter your nickname..." data-i18n-placeholder="nicknamePlaceholder" maxlength="15" autocomplete="off">
+        </div>
+        <div class="avatar-selection">
+          <p class="label" data-i18n="avatarLabel">Choose Warrior Avatar:</p>
+          <div class="avatar-grid" id="avatar-grid">
+            <button class="avatar-btn selected" data-avatar="🦊">🦊</button>
+            <button class="avatar-btn" data-avatar="🐉">🐉</button>
+            <button class="avatar-btn" data-avatar="🦅">🦅</button>
+            <button class="avatar-btn" data-avatar="🐺">🐺</button>
+            <button class="avatar-btn" data-avatar="🦁">🦁</button>
+            <button class="avatar-btn" data-avatar="🦈">🦈</button>
+            <button class="avatar-btn" data-avatar="🦉">🦉</button>
+            <button class="avatar-btn" data-avatar="🐯">🐯</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-card glass-card room-hub-card">
+        <div class="card-header-row">
+          <h3 class="card-title"><span class="icon">🏟️</span> <span data-i18n="roomHubTitle">Room Competition</span></h3>
+          <span class="connection-badge" id="connection-status-badge" data-i18n="badgeReady">⚡ Ready</span>
+        </div>
+
+        <div class="room-hub-actions">
+          <button id="btn-open-create-room" class="btn-primary neon-btn-gold">
+            <span class="btn-icon">➕</span> <span data-i18n="createRoomBtn">CREATE ROOM &amp; QR</span>
+          </button>
+          <button id="btn-open-custom-quiz" class="btn-secondary neon-btn-purple">
+            <span class="btn-icon">✍️</span> <span data-i18n="createQuizBtn">CREATE QUIZ</span> (<span id="custom-count-badge">0</span>)
+          </button>
+        </div>
+
+        <div class="join-room-bar">
+          <input type="text" id="join-room-code-input" class="neon-input code-input" placeholder="Enter 6-digit room code (e.g. 839201)" data-i18n-placeholder="joinCodePlaceholder" maxlength="6" inputmode="numeric" autocomplete="off">
+          <button id="btn-join-room" class="btn-join neon-btn-cyan"><span data-i18n="joinRoomBtn">🔑 JOIN ROOM</span></button>
+        </div>
+      </div>
+
+      <div class="setup-card glass-card">
+        <h3 class="card-title"><span class="icon">📚</span> <span data-i18n="quickBattleTitle">Quick Battle (1v1 Bot / Solo Speedrun)</span></h3>
+        <div class="category-grid" id="category-grid">
+          <button class="category-btn selected" data-category="Grammar">
+            <span class="cat-icon">📝</span>
+            <span class="cat-name" data-i18n="catGrammar">Grammar &amp; Vocabulary</span>
+            <span class="cat-desc" data-i18n="catGrammarDesc">Grammar &amp; Vocabulary</span>
+          </button>
+          <button class="category-btn" data-category="Phonetics">
+            <span class="cat-icon">🔍</span>
+            <span class="cat-name" data-i18n="catPhonetics">Phonetics &amp; Error ID</span>
+            <span class="cat-desc" data-i18n="catPhoneticsDesc">Phonetics &amp; Error ID</span>
+          </button>
+          <button class="category-btn" data-category="Synonym">
+            <span class="cat-icon">🔄</span>
+            <span class="cat-name" data-i18n="catSynonym">Synonym &amp; Antonym</span>
+            <span class="cat-desc" data-i18n="catSynonymDesc">Synonym &amp; Antonym</span>
+          </button>
+          <button class="category-btn" data-category="Reading">
+            <span class="cat-icon">📖</span>
+            <span class="cat-name" data-i18n="catReading">Reading Comprehension</span>
+            <span class="cat-desc" data-i18n="catReadingDesc">Reading Speedrun</span>
+          </button>
+        </div>
+
+        <div class="mode-grid" id="mode-grid" style="margin-top: 12px;">
+          <button class="mode-btn selected" data-mode="1v1">
+            <span class="mode-icon">🤖</span>
+            <span class="mode-name" data-i18n="mode1v1">1v1 vs AI Bot</span>
+            <span class="mode-desc" data-i18n="mode1v1Desc">Simulated real-time opponent</span>
+          </button>
+          <button class="mode-btn" data-mode="solo">
+            <span class="mode-icon">⚡</span>
+            <span class="mode-name" data-i18n="modeSolo">Solo Speedrun</span>
+            <span class="mode-desc" data-i18n="modeSoloDesc">Race against the clock</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="lobby-actions">
+        <button id="btn-start" class="btn-primary neon-btn-cyan">
+          <span class="btn-icon">⚔️</span> <span data-i18n="startQuickBtn">START QUICK BATTLE (1v1 / SOLO)</span>
+        </button>
+        <button id="btn-leaderboard" class="btn-secondary neon-btn-purple">
+          <span class="btn-icon">🏆</span> <span data-i18n="leaderboardBtn">SOLO / 1v1 LEADERBOARD</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <div id="screen-room-lobby" class="screen">
+    <div class="room-lobby-container">
+      <div class="room-top-banner glass-card">
+        <div class="room-code-block">
+          <span class="room-code-label" data-i18n="roomCodeLabel">ROOM MATCH CODE</span>
+          <div class="room-code-display neon-text-gold" id="room-code-display">000000</div>
+          <div class="room-meta-tags" id="room-meta-tags">
+            <span class="meta-pill">10 Questions</span>
+            <span class="meta-pill">30s / Q</span>
+            <span class="meta-pill" id="room-source-pill">System</span>
+          </div>
+        </div>
+
+        <div class="room-qr-block">
+          <div id="room-qr-container" class="qr-box"></div>
+          <div class="qr-actions">
+            <button id="btn-copy-room-link" class="btn-mini neon-btn-cyan" data-i18n="copyLinkBtn">📋 Copy Invite Link</button>
+            <button id="btn-copy-room-code" class="btn-mini neon-btn-purple" data-i18n="copyCodeBtn">🔢 Copy Code</button>
+          </div>
+          <p class="qr-hint" id="qr-url-hint" data-i18n="qrHint">Scan QR code with phone to join instantly</p>
+        </div>
+      </div>
+
+      <div class="glass-card room-players-card">
+        <div class="card-header-row">
+          <h3 class="card-title"><span class="icon">👥</span> <span data-i18n="playersListTitle">Contestants List</span> (<span id="room-player-count">1</span>)</h3>
+          <span class="room-mode-indicator" id="room-network-indicator">🌐 Real-time</span>
+        </div>
+        <div class="room-players-grid" id="room-players-list"></div>
+      </div>
+
+      <div class="room-controls-bar" id="room-host-controls">
+        <button id="btn-add-room-bot" class="btn-secondary neon-btn-purple">
+          <span class="btn-icon">🤖</span> <span data-i18n="addBotBtn">+ Add AI Bot (Test)</span>
+        </button>
+        <button id="btn-start-room-match" class="btn-primary neon-btn-gold">
+          <span class="btn-icon">🚀</span> <span data-i18n="startMatchBtn">START MATCH</span>
+        </button>
+      </div>
+
+      <div class="glass-card guest-waiting-box" id="room-guest-waiting" style="display:none">
+        <span class="pulse-dot"></span>
+        <span data-i18n="waitingHostNotice">Waiting for Host to press Start... Get ready!</span>
+      </div>
+
+      <button id="btn-leave-room" class="btn-danger-outline" data-i18n="leaveRoomBtn">🚪 Leave Room</button>
+    </div>
+  </div>
+
+    <div id="screen-battle" class="screen">
+    <div class="battle-vignette" id="battle-vignette"></div>
+    <div class="battle-container">
+            <div class="battle-hud" id="hud-1v1">
+        <div class="fighter-card player-card">
+          <div class="fighter-avatar" id="player-avatar-display">🦊</div>
+          <div class="fighter-info">
+            <span class="fighter-name" id="player-name-display">Player</span>
+            <div class="hp-bar-container">
+              <div class="hp-bar player-hp" id="player-hp-bar">
+                <span class="hp-text" id="player-hp-text">100 HP</span>
+              </div>
+            </div>
+            <div class="fighter-score">Score: <span id="player-score-display">0</span></div>
+          </div>
+        </div>
+
+        <div class="vs-badge">
+          <span class="vs-text neon-text">VS</span>
+          <div class="round-info">
+            Câu <span id="question-counter">1</span>/<span id="question-total">10</span>
+          </div>
+        </div>
+
+        <div class="fighter-card opponent-card">
+          <div class="fighter-avatar" id="opponent-avatar-display">🤖</div>
+          <div class="fighter-info">
+            <span class="fighter-name" id="opponent-name-display">AI Bot</span>
+            <div class="hp-bar-container">
+              <div class="hp-bar opponent-hp" id="opponent-hp-bar">
+                <span class="hp-text" id="opponent-hp-text">100 HP</span>
+              </div>
+            </div>
+            <div class="fighter-score">Score: <span id="opponent-score-display">0</span></div>
+          </div>
+        </div>
+      </div>
+
+            <div class="room-battle-hud glass-card" id="hud-room" style="display:none">
+        <div class="room-hud-left">
+          <div class="fighter-avatar" id="room-me-avatar">🦊</div>
+          <div>
+            <div class="room-me-name" id="room-me-name">Player</div>
+            <div class="room-me-metrics">
+              <span class="metric-correct">✅ <strong id="room-me-correct">0</strong> đúng</span>
+              <span class="metric-time">⏱️ <strong id="room-me-time">0.000s</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="room-hud-center">
+          <div class="room-round-badge"><span data-i18n="questionUpper">QUESTION</span> <span id="room-q-counter">1</span>/<span id="room-q-total">10</span></div>
+          <div class="room-answered-pill"><span data-i18n="answeredCountLabel">Answered:</span> <span id="room-answered-count">0/0</span></div>
+        </div>
+
+        <div class="room-hud-right">
+          <div class="mini-standings-title" data-i18n="topLeadersTitle">TOP LEADERS</div>
+          <div class="mini-standings-list" id="room-mini-standings"></div>
+        </div>
+      </div>
+
+      <div class="combo-display" id="combo-display" style="display:none">
+        <span class="combo-fire">🔥</span>
+        <span class="combo-count" id="combo-count">0</span>
+        <span class="combo-label" data-i18n="comboFire">COMBO!</span>
+        <span class="combo-multiplier" id="combo-multiplier"></span>
+      </div>
+
+      <div class="timer-section">
+        <div class="timer-bar-container">
+          <div class="timer-bar" id="timer-bar"></div>
+        </div>
+        <div class="timer-text" id="timer-text">30.0s</div>
+      </div>
+
+      <div class="question-area glass-card" id="question-card">
+        <div class="question-category" id="question-category-badge">GRAMMAR</div>
+        <p class="question-text" id="question-text">Loading question...</p>
+      </div>
+
+      <div class="options-grid" id="options-grid">
+        <button class="option-btn opt-red" data-index="0">
+          <span class="option-shape">▲</span>
+          <span class="option-letter">A</span>
+          <span class="option-text" id="option-0">Option A</span>
+        </button>
+        <button class="option-btn opt-blue" data-index="1">
+          <span class="option-shape">◆</span>
+          <span class="option-letter">B</span>
+          <span class="option-text" id="option-1">Option B</span>
+        </button>
+        <button class="option-btn opt-yellow" data-index="2">
+          <span class="option-shape">●</span>
+          <span class="option-letter">C</span>
+          <span class="option-text" id="option-2">Option C</span>
+        </button>
+        <button class="option-btn opt-green" data-index="3">
+          <span class="option-shape">■</span>
+          <span class="option-letter">D</span>
+          <span class="option-text" id="option-3">Option D</span>
+        </button>
+      </div>
+
+      <div class="room-round-status glass-card" id="room-round-status" style="display:none"></div>
+
+      <div class="powerups-bar" id="powerups-bar">
+        <button class="powerup-btn" id="powerup-5050" data-power="5050" title="Eliminate 2 wrong answers" data-i18n-title="powerup5050Title">
+          <span class="powerup-icon">✂️</span>
+          <span class="powerup-label">50:50</span>
+        </button>
+        <button class="powerup-btn" id="powerup-freeze" data-power="freeze" title="Freeze clock for 4 seconds" data-i18n-title="powerupFreezeTitle">
+          <span class="powerup-icon">❄️</span>
+          <span class="powerup-label">Freeze</span>
+        </button>
+        <button class="powerup-btn" id="powerup-hint" data-power="hint" title="Grammar hint / Mistake shield" data-i18n-title="powerupHintTitle">
+          <span class="powerup-icon">🛡️</span>
+          <span class="powerup-label">Shield</span>
+        </button>
+      </div>
+
+      <div class="explanation-overlay" id="explanation-overlay" style="display:none">
+        <div class="explanation-card glass-card">
+          <div class="explanation-header" id="explanation-header">
+            <span class="explanation-icon">💡</span> <span data-i18n="explanationHeader">Explanation</span>
+          </div>
+          <p class="explanation-text" id="explanation-text"></p>
+          <p class="explanation-correct" id="explanation-correct"></p>
+          <button class="btn-continue neon-btn-cyan" id="btn-continue" data-i18n="btnContinue">Continue ▶</button>
+        </div>
+      </div>
+
+      <div class="damage-popup" id="damage-popup-player" style="display:none"></div>
+      <div class="damage-popup" id="damage-popup-opponent" style="display:none"></div>
+    </div>
+  </div>
+
+  <div id="screen-ceremony" class="screen">
+    <canvas id="ceremony-canvas"></canvas>
+    <div class="spotlight-beam" id="ceremony-spotlight"></div>
+
+    <div class="ceremony-container">
+      <div class="ceremony-header">
+        <div class="ceremony-crown" id="ceremony-crown">🏆</div>
+        <h1 class="ceremony-title neon-text-gold" data-i18n="ceremonyTitle">HONOR AWARD CEREMONY</h1>
+        <p class="ceremony-status" id="ceremony-status" data-i18n="ceremonyStatusInit">Preparing leaderboard reveal from bottom to top...</p>
+      </div>
+
+      <div class="ceremony-board" id="ceremony-list"></div>
+
+      <div class="ceremony-controls">
+        <button id="btn-skip-ceremony" class="btn-mini neon-btn-purple" data-i18n="skipCeremonyBtn">⏭️ Reveal All Now</button>
+      </div>
+
+      <div class="ceremony-actions" id="ceremony-actions" style="display:none">
+        <button id="btn-ceremony-review" class="btn-secondary neon-btn-gold">
+          <span class="btn-icon">📝</span> <span data-i18n="ceremonyReviewBtn">REVIEW MISTAKES</span> (<span id="ceremony-wrong-count">0</span>)
+        </button>
+        <button id="btn-ceremony-rematch" class="btn-primary neon-btn-cyan">
+          <span class="btn-icon">🔄</span> <span data-i18n="ceremonyRematchBtn">RETURN TO ROOM LOBBY</span>
+        </button>
+        <button id="btn-ceremony-home" class="btn-secondary neon-btn-purple">
+          <span class="btn-icon">🏠</span> <span data-i18n="ceremonyHomeBtn">MAIN MENU</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-result" class="screen">
+    <div class="result-container">
+      <div class="result-banner" id="result-banner">
+        <div class="result-icon" id="result-icon">🏆</div>
+        <h1 class="result-title neon-text" id="result-title" data-i18n="resultVictoryTitle">VICTORY!</h1>
+        <p class="result-subtitle" id="result-subtitle" data-i18n="resultVictorySub">You won the battle!</p>
+      </div>
+
+      <div class="result-stats glass-card">
+        <h3 class="card-title"><span class="icon">📊</span> <span data-i18n="resultStatsTitle">Match Statistics</span></h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-value neon-text" id="stat-total-score">0</span>
+            <span class="stat-label" data-i18n="statTotalScore">Total Score</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value neon-text-purple" id="stat-correct">0/0</span>
+            <span class="stat-label" data-i18n="statCorrect">Correct Answers</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value neon-text-gold" id="stat-combo">0</span>
+            <span class="stat-label" data-i18n="statCombo">Highest Combo</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value neon-text" id="stat-avg-time">0s</span>
+            <span class="stat-label" data-i18n="statAvgTime">Total Time</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-section glass-card" id="review-section">
+        <h3 class="card-title"><span class="icon">📝</span> <span data-i18n="reviewSectionTitle">Review Mistakes</span></h3>
+        <div class="review-list" id="review-list"></div>
+        <p class="review-empty" id="review-empty" style="display:none" data-i18n="reviewEmpty">🎉 Awesome! You got 100% correct!</p>
+      </div>
+
+      <div class="result-actions">
+        <button id="btn-rematch" class="btn-primary neon-btn-cyan">
+          <span class="btn-icon">🔄</span> <span data-i18n="rematchBtn">PLAY AGAIN</span>
+        </button>
+        <button id="btn-home" class="btn-secondary neon-btn-purple">
+          <span class="btn-icon">🏠</span> <span data-i18n="homeBtn">MAIN MENU</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-create-room" style="display:none">
+    <div class="modal-content glass-card modal-wide">
+      <div class="modal-header">
+        <h2 class="modal-title neon-text-gold"><span>🏟️</span> <span data-i18n="modalCreateRoomTitle">Room Setup</span></h2>
+        <button class="modal-close" id="btn-close-create-room">&times;</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" data-i18n="labelQuestionCount">1. Number of questions in match (30s / question):</label>
+        <div class="pill-selector" id="room-qcount-selector">
+          <button type="button" class="pill-btn" data-count="5">5 Qs</button>
+          <button type="button" class="pill-btn selected" data-count="10">10 Qs</button>
+          <button type="button" class="pill-btn" data-count="15">15 Qs</button>
+          <button type="button" class="pill-btn" data-count="20">20 Qs</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" data-i18n="labelQuestionSource">2. Question Source:</label>
+        <div class="source-grid" id="room-source-selector">
+          <button type="button" class="source-btn selected" data-source="system">
+            <span class="source-icon">📚</span>
+            <span class="source-title" data-i18n="sourceSystemTitle">System Question Bank</span>
+            <span class="source-sub" data-i18n="sourceSystemSub">Standard THPT / IELTS Prep</span>
+          </button>
+          <button type="button" class="source-btn" data-source="custom">
+            <span class="source-icon">✍️</span>
+            <span class="source-title" data-i18n="sourceCustomTitle">Custom Quiz Collection</span>
+            <span class="source-sub"><span data-i18n="sourceCustomSub">Currently {0} questions</span>: <strong id="modal-custom-count">0</strong></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group" id="room-system-cat-group">
+        <label class="form-label" data-i18n="labelSystemCategory">3. System Category:</label>
+        <select id="room-system-category" class="neon-select">
+          <option value="All" data-i18n="optCatAll">🔥 All Topics Mixed (THPT &amp; IELTS)</option>
+          <option value="Grammar" data-i18n="optCatGrammar">📝 Grammar &amp; Vocabulary</option>
+          <option value="Phonetics" data-i18n="optCatPhonetics">🔍 Phonetics &amp; Error Identification</option>
+          <option value="Synonym" data-i18n="optCatSynonym">🔄 Synonym &amp; Antonym Challenge</option>
+          <option value="Reading" data-i18n="optCatReading">📖 Reading Comprehension Speedrun</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="room-custom-helper" style="display:none">
+        <div class="info-banner">
+          <span data-i18n="customHelperText">✍️ You can add custom questions or import JSON before creating a room.</span>
+          <button type="button" id="btn-create-to-custom-editor" class="btn-mini neon-btn-purple" data-i18n="openCustomEditorBtn">Open Quiz Creator</button>
+        </div>
+      </div>
+
+      <button id="btn-confirm-create-room" class="btn-primary neon-btn-gold" style="width:100%; margin-top: 12px;">
+        🚀 <span data-i18n="confirmCreateRoomBtn">CREATE ROOM &amp; GENERATE QR</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-custom-quiz" style="display:none">
+    <div class="modal-content glass-card modal-xl">
+      <div class="modal-header">
+        <h2 class="modal-title neon-text-purple"><span>✍️</span> <span data-i18n="customQuizModalTitle">Custom Quiz Creator</span></h2>
+        <button class="modal-close" id="btn-close-custom-quiz">&times;</button>
+      </div>
+
+      <div class="custom-toolbar">
+        <button type="button" id="cq-sample-btn" class="btn-mini neon-btn-cyan" data-i18n="cqSampleBtn">✨ Load 5 Samples</button>
+        <button type="button" id="cq-import-btn" class="btn-mini neon-btn-purple" data-i18n="cqImportBtn">📥 Import JSON</button>
+        <input type="file" id="cq-import-file" accept=".json,application/json" style="display:none">
+        <button type="button" id="cq-export-btn" class="btn-mini neon-btn-gold" data-i18n="cqExportBtn">📤 Export JSON</button>
+        <button type="button" id="cq-clear-btn" class="btn-mini btn-danger-mini" data-i18n="cqClearBtn">🗑️ Clear All</button>
+      </div>
+
+      <div class="custom-creator-layout">
+        <form id="cq-form" class="cq-form">
+          <input type="hidden" id="cq-edit-index" value="-1">
+          <div class="form-group">
+            <label class="form-label" data-i18n="labelCqQuestion">Question Content:</label>
+            <textarea id="cq-question" class="neon-textarea" rows="2" placeholder="E.g.: By the time we arrived, the film ______." data-i18n-placeholder="cqQuestionPlaceholder" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="labelCqCategory">Category:</label>
+            <select id="cq-category" class="neon-select">
+              <option value="Custom">Custom</option>
+              <option value="Grammar">Grammar</option>
+              <option value="Vocabulary">Vocabulary</option>
+              <option value="Phonetics">Phonetics</option>
+              <option value="Synonym">Synonym</option>
+              <option value="Reading">Reading</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="labelCqOptions">4 Options (select radio button for CORRECT answer):</label>
+            <div class="cq-options-inputs">
+              <div class="cq-opt-row">
+                <input type="radio" name="cq-correct" value="0" checked title="Correct answer">
+                <span class="cq-letter">A</span>
+                <input type="text" id="cq-opt-0" class="neon-input-sm" placeholder="Option A..." required>
+              </div>
+              <div class="cq-opt-row">
+                <input type="radio" name="cq-correct" value="1" title="Correct answer">
+                <span class="cq-letter">B</span>
+                <input type="text" id="cq-opt-1" class="neon-input-sm" placeholder="Option B..." required>
+              </div>
+              <div class="cq-opt-row">
+                <input type="radio" name="cq-correct" value="2" title="Correct answer">
+                <span class="cq-letter">C</span>
+                <input type="text" id="cq-opt-2" class="neon-input-sm" placeholder="Option C..." required>
+              </div>
+              <div class="cq-opt-row">
+                <input type="radio" name="cq-correct" value="3" title="Correct answer">
+                <span class="cq-letter">D</span>
+                <span class="cq-letter">D</span>
+                <input type="text" id="cq-opt-3" class="neon-input-sm" placeholder="Option D..." required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="labelCqExplanation">Short Explanation:</label>
+            <textarea id="cq-explanation" class="neon-textarea" rows="2" placeholder="E.g.: An action completed before another past event uses Past Perfect (had + V3/ed)." data-i18n-placeholder="cqExplanationPlaceholder"></textarea>
+          </div>
+
+          <div class="cq-form-actions">
+            <button type="submit" id="cq-submit-btn" class="btn-primary neon-btn-cyan" style="padding:12px;">💾 <span data-i18n="cqSaveBtn">SAVE QUESTION</span></button>
+            <button type="button" id="cq-cancel-edit-btn" class="btn-mini neon-btn-purple" style="display:none" data-i18n="cqCancelEditBtn">Cancel edit</button>
+          </div>
+        </form>
+
+        <div class="cq-list-panel">
+          <h4 class="cq-list-title"><span data-i18n="cqSavedListTitle">Saved Questions</span> (<span id="cq-list-count">0</span>)</h4>
+          <div class="cq-list" id="cq-list">
+            <div class="leaderboard-empty" data-i18n="cqEmptyList">No custom questions yet. Add one or load samples!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-review" style="display:none">
+    <div class="modal-content glass-card modal-wide">
+      <div class="modal-header">
+        <h2 class="modal-title neon-text"><span>📝</span> <span data-i18n="modalReviewTitle">Review Mistakes In Match</span></h2>
+        <button class="modal-close" id="btn-close-review">&times;</button>
+      </div>
+      <div class="review-list" id="modal-review-list"></div>
+      <p class="review-empty" id="modal-review-empty" style="display:none" data-i18n="modalReviewEmpty">🎉 Awesome! You answered 100% correctly!</p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-leaderboard" style="display:none">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h2 class="modal-title neon-text-gold"><span>🏆</span> <span data-i18n="modalLeaderboardTitle">Solo / 1v1 Leaderboard</span></h2>
+        <button class="modal-close" id="btn-close-leaderboard">&times;</button>
+      </div>
+      <div class="leaderboard-list" id="leaderboard-list">
+        <div class="leaderboard-empty" data-i18n="leaderboardEmpty">No ranking records yet</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="transition-overlay" id="transition-overlay">
+    <div class="transition-text" id="transition-text">GET READY!</div>
+  </div>
+
+  <div class="ko-overlay" id="ko-overlay" style="display:none">
+    <div class="ko-text">K.O!</div>
+  </div>
+
+  <div class="toast-notification" id="toast-notification"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="i18n.js"></script>
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

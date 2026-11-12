@@ -1,0 +1,14 @@
+{
+  "name": "quiz-battle-english-master",
+  "version": "2.0.0",
+  "description": "Quiz Battle: English Master - Room Competition & EdTech Arena",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.1"
+  }
+}
